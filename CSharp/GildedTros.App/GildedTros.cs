@@ -46,6 +46,13 @@ namespace GildedTros.App
                         break;
                     case "B-DAWG Keychain": //a legendary item that doesn't change in either quality or sellIn
                         break;
+                    case "Duplicate Code":
+                    case "Long Methods":
+                    case "Ugly Variable Names":
+                        var doubleQualityDegradeValue = currentItem.SellIn < 0 ? 4 : 2; //degrade twice as fast when sellIn date reached
+                        currentItem.Quality = currentItem.Quality - doubleQualityDegradeValue;
+                        currentItem.SellIn = currentItem.SellIn - 1;
+                        break;
                     default:
                         var qualityDegradeValue = currentItem.SellIn < 0 ? 2 : 1; //degrade twice as fast when sellIn date reached
                         currentItem.Quality = currentItem.Quality - qualityDegradeValue;
