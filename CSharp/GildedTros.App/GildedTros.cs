@@ -20,40 +20,48 @@ namespace GildedTros.App
                 switch (currentItemName)
                 {
                     case "Good Wine":
-                        if (currentItem.Quality == 50)
-                        {
-                            break;
-                        }
-                        currentItem.Quality = currentItem.Quality + 1;
+                        var qualityIncreaseValue = currentItem.SellIn < 0 ? 2 : 1; //'degrade' twice as fast; in this case 'upgrade'
+                        currentItem.Quality = currentItem.Quality + qualityIncreaseValue; //wine increases in quality when 'expired'
+                        currentItem.SellIn = currentItem.SellIn - 1;
                         break;
                     case "Backstage passes for Re:factor":
                     case "Backstage passes for HAXX":
-                        if (currentItem.Quality == 50)
+                        if (currentItem.SellIn < 0)
                         {
-                            break;
+                            currentItem.Quality = 0;
                         }
-                        if (currentItem.SellIn < 11)
+                        else if (currentItem.SellIn <= 5)
+                        {
+                            currentItem.Quality = currentItem.Quality + 3;
+                        }
+                        else if (currentItem.SellIn <= 10)
+                        {
+                            currentItem.Quality = currentItem.Quality + 2;
+                        }
+                        else
                         {
                             currentItem.Quality = currentItem.Quality + 1;
                         }
-
-                        if (currentItem.SellIn < 6)
-                        {
-                            currentItem.Quality = currentItem.Quality + 1;
-                        }
+                        currentItem.SellIn = currentItem.SellIn - 1;
                         break;
                     case "B-DAWG Keychain":
                         break;
                     default:
-                        if (currentItem.Quality == 50)
-                        {
-                            break;
-                        }
-                        currentItem.Quality = currentItem.Quality - 1;
+                        var qualityDegradeValue = currentItem.SellIn < 0 ? 2 : 1; //degrade twice as fast when sellIn date reached
+                        currentItem.Quality = currentItem.Quality - qualityDegradeValue;
+                        currentItem.SellIn = currentItem.SellIn - 1;
                         break;
                 }
 
-                currentItem.SellIn -= 1; //at the end of each day lower SellIn value by 1
+                if (currentItem.Quality > 50 && !currentItemName.Equals("B-DAWG Keychain"))
+                {
+                    currentItem.Quality = 50; // quality can't be higher than 50 (unless legendary)
+                }
+
+                if (currentItem.Quality < 0)
+                {
+                    currentItem.Quality = 0;
+                }
 
                 //if (Items[i].Name != "Good Wine"
                 //    && Items[i].Name != "Backstage passes for Re:factor"
