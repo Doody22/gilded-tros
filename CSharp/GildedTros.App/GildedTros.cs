@@ -20,31 +20,31 @@ namespace GildedTros.App
                 switch (currentItemName)
                 {
                     case "Good Wine":
-                        var qualityIncreaseValue = currentItem.SellIn < 0 ? 2 : 1; //'degrade' twice as fast; in this case 'upgrade'
+                        var qualityIncreaseValue = currentItem.SellIn <= 0 ? 2 : 1; //'degrade' twice as fast; in this case 'upgrade'
                         currentItem.Quality = currentItem.Quality + qualityIncreaseValue; //wine increases in quality when 'expired'
                         currentItem.SellIn = currentItem.SellIn - 1;
                         break;
                     case "Backstage passes for Re:factor":
                     case "Backstage passes for HAXX":
-                        if (currentItem.SellIn < 0)
+                        if (currentItem.SellIn <= 0) // when SellIn date reached this becomes worthless
                         {
                             currentItem.Quality = 0;
                         }
-                        else if (currentItem.SellIn <= 5)
+                        else if (currentItem.SellIn <= 5) // when SellIn date is in less than 6 days; increase quality every day by 3
                         {
                             currentItem.Quality = currentItem.Quality + 3;
                         }
-                        else if (currentItem.SellIn <= 10)
+                        else if (currentItem.SellIn <= 10)  // when SellIn date is in less than 11 days; increase quality every day by 2
                         {
                             currentItem.Quality = currentItem.Quality + 2;
                         }
-                        else
+                        else // when SellIn date is more than 11 days, increase quality by one every day
                         {
                             currentItem.Quality = currentItem.Quality + 1;
                         }
                         currentItem.SellIn = currentItem.SellIn - 1;
                         break;
-                    case "B-DAWG Keychain":
+                    case "B-DAWG Keychain": //a legendary item that doesn't change in either quality or sellIn
                         break;
                     default:
                         var qualityDegradeValue = currentItem.SellIn < 0 ? 2 : 1; //degrade twice as fast when sellIn date reached
@@ -60,7 +60,7 @@ namespace GildedTros.App
 
                 if (currentItem.Quality < 0)
                 {
-                    currentItem.Quality = 0;
+                    currentItem.Quality = 0; // quality can't be lower than 0
                 }
 
                 //if (Items[i].Name != "Good Wine"
