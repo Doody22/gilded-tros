@@ -10,6 +10,19 @@ namespace GildedTros.App
             this.Items = Items;
         }
 
+
+        private void UpdateValues(Item currentItem, int quality, bool isDecrease = true)
+        {
+            if (isDecrease)
+            {
+                currentItem.Quality -= quality;
+            } else
+            {
+                currentItem.Quality += quality;
+            }
+            currentItem.SellIn -= 1;
+
+        }
         public void UpdateQuality()
         {
             for (var i = 0; i < Items.Count; i++)
@@ -21,42 +34,40 @@ namespace GildedTros.App
                 {
                     case "Good Wine":
                         var qualityIncreaseValue = currentItem.SellIn <= 0 ? 2 : 1; //'degrade' twice as fast; in this case 'upgrade'
-                        currentItem.Quality = currentItem.Quality + qualityIncreaseValue; //wine increases in quality when 'expired'
-                        currentItem.SellIn = currentItem.SellIn - 1;
+                        UpdateValues(currentItem, qualityIncreaseValue, false); // wine increases in value the closer it is to sellIn value
                         break;
                     case "Backstage passes for Re:factor":
                     case "Backstage passes for HAXX":
+                        var quality = 0;
                         if (currentItem.SellIn <= 0) // when SellIn date reached this becomes worthless
                         {
                             currentItem.Quality = 0;
                         }
                         else if (currentItem.SellIn <= 5) // when SellIn date is in less than 6 days; increase quality every day by 3
                         {
-                            currentItem.Quality = currentItem.Quality + 3;
+                            quality = 3;
                         }
                         else if (currentItem.SellIn <= 10)  // when SellIn date is in less than 11 days; increase quality every day by 2
                         {
-                            currentItem.Quality = currentItem.Quality + 2;
+                            quality = 2;
                         }
                         else // when SellIn date is more than 11 days, increase quality by one every day
                         {
-                            currentItem.Quality = currentItem.Quality + 1;
+                            quality = 1;
                         }
-                        currentItem.SellIn = currentItem.SellIn - 1;
+                        UpdateValues(currentItem, quality, false);
                         break;
                     case "B-DAWG Keychain": //a legendary item that doesn't change in either quality or sellIn
                         break;
                     case "Duplicate Code":
                     case "Long Methods":
                     case "Ugly Variable Names":
-                        var doubleQualityDegradeValue = currentItem.SellIn < 0 ? 4 : 2; //degrade twice as fast when sellIn date reached
-                        currentItem.Quality = currentItem.Quality - doubleQualityDegradeValue;
-                        currentItem.SellIn = currentItem.SellIn - 1;
+                        var doubleQualityDegradeValue = currentItem.SellIn <= 0 ? 4 : 2; //degrade twice as fast when sellIn date reached
+                        UpdateValues(currentItem, doubleQualityDegradeValue);
                         break;
                     default:
-                        var qualityDegradeValue = currentItem.SellIn < 0 ? 2 : 1; //degrade twice as fast when sellIn date reached
-                        currentItem.Quality = currentItem.Quality - qualityDegradeValue;
-                        currentItem.SellIn = currentItem.SellIn - 1;
+                        var qualityDegradeValue = currentItem.SellIn <= 0 ? 2 : 1; //degrade twice as fast when sellIn date reached
+                        UpdateValues(currentItem, qualityDegradeValue);
                         break;
                 }
 
